@@ -25,7 +25,23 @@ this file.
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(BuildWith)' == 'fable' ">
-        <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+
+        <!--<Reference Include="@(PackageReference -> 'node_modules/fable-core/%(FullPath)')" />-->
+        <!--<Message Text="Nome2 node_modules/fable-core/%(FablePackage.Identity)" Importance="High" />-->
+        <!--<Reference Include="node_modules/fable-core/%(FablePackage.Identity)" />-->
+
+        <MyPkg Include="@(FablePackage)">
+             <DllDir>$([System.String]::new('%(Identity)').ToLower().Replace('.','-'))</DllDir>
+             <DllName>%(Identity)</DllName>
+        </MyPkg>
+
+        <Reference Include="@(MyPkg -> 'node_modules/%(DllDir)/%(DllName).dll')" />
+
+        <!--<Reference Include="node"  
+            Text = "Items in ExampColl: @(ExampColl)"  
+            Condition="'%(Number)'=='2'"/>  -->
+
+        <!--<Reference Include="node_modules/fable-core/Fable.Core.dll" />-->
     </ItemGroup>    
 
     <Target

@@ -19,6 +19,10 @@
     <!--  Aggiungere Fable.Sdk in modo che fa override di CoreCompile? -->
   </ItemGroup>
 
+  <ItemGroup>
+    <FablePackage Include="Fable.Core" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Fable properties -->
     <Bundle>true</Bundle>
