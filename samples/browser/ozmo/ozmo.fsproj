@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="*" />
+    <PackageReference Include="FSharp.Core" Version="*" >
+      <Npm>true</Npm>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
@@ -32,9 +34,6 @@
     <Compile Include="ozmo.fsx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="node_modules/fable-core/Fable.Core.dll" />
-  </ItemGroup>
 
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

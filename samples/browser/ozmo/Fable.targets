@@ -24,6 +24,10 @@ this file.
         <TargetExt>.js</TargetExt>
     </PropertyGroup>
 
+    <ItemGroup Condition=" '$(BuildWith)' == 'fable' ">
+        <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+    </ItemGroup>    
+
     <Target
           Condition=" '$(BuildWith)' == 'fable' "
           Name="CoreCompile"
@@ -60,6 +64,7 @@ this file.
             <FableCompilerResponseLines Include="--sourceMaps:$(SourceMaps)" />
             
             <!--FABLE_COMPILER-->
+            <FableCompilerResponseLines Include="@(ReferencePath)" />
 
             <FableCompilerResponseLines Include="@(Compile)" />
         </ItemGroup>
