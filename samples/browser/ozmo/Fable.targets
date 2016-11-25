@@ -22,26 +22,33 @@ this file.
     <PropertyGroup Condition=" '$(BuildWith)' == 'fable' ">
         <!-- override per fable da spostare nel target file -->
         <TargetExt>.js</TargetExt>
+
+        <!-- TODO: Find node_modules directory recursively -->
+
+        <!-- KO: GetDirectoryNameOfFileAbove if perfect but works for files only
+            <Modules_Dir
+            Condition=" '$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), node_modules))' != '' "
+            >$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), "node_modules"))\node_modules</Modules_Dir>-->
+
+        <NodeModulesDirectory>$(MSBuildThisFileDirectory)node_modules</NodeModulesDirectory>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(BuildWith)' == 'fable' ">
 
-        <!--<Reference Include="@(PackageReference -> 'node_modules/fable-core/%(FullPath)')" />-->
-        <!--<Message Text="Nome2 node_modules/fable-core/%(FablePackage.Identity)" Importance="High" />-->
-        <!--<Reference Include="node_modules/fable-core/%(FablePackage.Identity)" />-->
-
+        <!-- Let's convert $(FablePackage) to path inside node_modules directory -->
         <MyPkg Include="@(FablePackage)">
              <DllDir>$([System.String]::new('%(Identity)').ToLower().Replace('.','-'))</DllDir>
              <DllName>%(Identity)</DllName>
         </MyPkg>
 
-        <Reference Include="@(MyPkg -> 'node_modules/%(DllDir)/%(DllName).dll')" />
+        <Reference Include="@(MyPkg -> '$(NodeModulesDirectory)/%(DllDir)/%(DllName).dll')" />
 
-        <!--<Reference Include="node"  
+        <!-- MSBUILD EXAMPLE: filter itemgroup by condition
+        
+        <Reference Include="node"  
             Text = "Items in ExampColl: @(ExampColl)"  
             Condition="'%(Number)'=='2'"/>  -->
 
-        <!--<Reference Include="node_modules/fable-core/Fable.Core.dll" />-->
     </ItemGroup>    
 
     <Target
@@ -79,13 +86,14 @@ this file.
         <ItemGroup>
             <FableCompilerResponseLines Include="--sourceMaps:$(SourceMaps)" />
             
-            <!--FABLE_COMPILER-->
+            <!--FABLE_COMPILER define-->
             <FableCompilerResponseLines Include="@(ReferencePath)" />
 
             <FableCompilerResponseLines Include="@(Compile)" />
         </ItemGroup>
 
         <Message Text="ciao da fable compiler" Importance="High" />
+        <Message Text="NodeModules Dir: '$(NodeModulesDirectory)'" Importance="High" />
 
         <WriteLinesToFile File="$(_IntermediateOutputPathFull)$(TargetName)$(TargetExt)" Lines="@(FableCompilerResponseLines)" Overwrite="True" />
     </Target>
