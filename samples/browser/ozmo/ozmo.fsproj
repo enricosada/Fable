@@ -1,0 +1,45 @@
+﻿<Project ToolsVersion="15.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <Version>1.0.0-alpha</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="*" />
+    <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+
+    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.0-alpha-*">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <!--  Aggiungere Fable.Sdk in modo che fa override di CoreCompile? -->
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Fable properties -->
+    <Bundle>true</Bundle>
+    <SourceMaps>true</SourceMaps>
+
+    <!-- Choose how to build this project "fable|dotnet" (default dotnet) -->
+    <BuildWith>fable</BuildWith>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Include="ozmo.fsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="node_modules/fable-core/Fable.Core.dll" />
+  </ItemGroup>
+
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+
+  <!-- Finche non c'e' Fable.Sdk -->
+  <Import Project="Fable.targets" />
+
+</Project>
