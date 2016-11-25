@@ -224,3 +224,5 @@ docs/tools/FSharp.Formatting.svclog
 .ionide.debug
 *.bak
 project.lock.json
+samples/browser/ozmo/fable-help.txt
+samples/browser/ozmo/log.txt
