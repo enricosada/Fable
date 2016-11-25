@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="*" >
+    <!--<PackageReference Include="FSharp.Core" Version="*" >
       <Npm>true</Npm>
-    </PackageReference>
+    </PackageReference>-->
     <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
