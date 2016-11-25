@@ -20,8 +20,8 @@
 
   <ItemGroup>
     <FablePackage Include="Fable.Core" />
-    <FablePackage Include="Fable.PowerPack" />
-    <FablePackage Include="Fable.React" />
+    <!--<FablePackage Include="Fable.PowerPack" />
+    <FablePackage Include="Fable.React" />-->
   </ItemGroup>
 
   <PropertyGroup>
