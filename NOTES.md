@@ -25,10 +25,10 @@ Now the user would type: `./node_modules/.bin/fable init src/MyProject` (this co
 
 ES: this can be done by normal sdk `dotnet new` (templates will be installable by remote feeds, partial templates too probably)  
 ES: example: `dotnet new -t fable` (or `fable_react` or `fable_elmish` etc).  
-ES: this will be the way to go for whole sdk (c#/aspnet/etc)
-ES: so there will be like
-ES: `dotnet new --install http://suave.io/templates.feed` once (or no need if in nuget.org)
-ES: `dotnet new -t suave_microservice --lang fsharp`
+ES: this will be the way to go for whole sdk (c#/aspnet/etc)  
+ES: so there will be like  
+ES: `dotnet new --install http://suave.io/templates.feed` once (or no need if in nuget.org)  
+ES: `dotnet new -t suave_microservice --lang fsharp`  
 
 > Note users may have different projects in the same repo, but they may want to share the npm dependencies (that's why it's necessary to look for `node_modules` in parent directories too). 
 
