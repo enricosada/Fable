@@ -13,7 +13,6 @@
     <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.0-alpha-*">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
@@ -29,12 +28,9 @@
     <BuildWith>fable</BuildWith>
   </PropertyGroup>
 
-
   <ItemGroup>
     <Compile Include="ozmo.fsx" />
   </ItemGroup>
-
-
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 
