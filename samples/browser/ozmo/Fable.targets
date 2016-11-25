@@ -98,4 +98,8 @@ this file.
         <WriteLinesToFile File="$(_IntermediateOutputPathFull)$(TargetName)$(TargetExt)" Lines="@(FableCompilerResponseLines)" Overwrite="True" />
     </Target>
 
+    <Target Name="Fable">
+        <Message Text="ciao da fable target" Importance="High" />
+    </Target>
+
 </Project>

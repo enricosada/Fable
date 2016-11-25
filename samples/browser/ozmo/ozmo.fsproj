@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="FSharp.Core" Version="*" >
-      <Npm>true</Npm>
-    </PackageReference>-->
     <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
@@ -17,6 +14,8 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <!--  Aggiungere Fable.Sdk in modo che fa override di CoreCompile? -->
+
+    <PackageReference Include="FSharp.Core" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
