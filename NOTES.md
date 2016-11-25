@@ -91,8 +91,7 @@ ES: v1 can be for sure `<FableReference Include="fable-core" />` it's just a bit
 > or just ask the user to edit `.fsproj` manually for now.
 
 ES: pls dont, less files, it's better. I hope `paket.references` will be merged inside `fsproj` as `<PaketReference Include="Argu" />` too, so fsproj is enough  
-ES: maybe you can also just move props inside fsproj directly (optional obj, `fableconfig.json` will override, so will works without fsproj too)
-
+ES: maybe you can also just move props inside fsproj directly (optional obj, `fableconfig.json` will override, so will works without fsproj too)  
 
 ## 6. build it!
 
@@ -119,14 +118,50 @@ ES: Ok, the committed template already does that (not yet the recursive node_mod
 
 ES: Np about that, the target file can search it
 
-About building the project using `dotnet build` or `../.../node_modules/.bin/fable`, I don't have a strong preference at the moment. Fable has to read the `.fsproj` again to get the source files and references anyways.
-
-ES: That's something the sdk can be improve a lot.  
-ES: I already know inside the target file, all the source/references/defines/etc.  
-ES: I can give you (`fablecompiler`) the fsc compiler args (no need for projectcracker anymore!)  
-ES: As a note, i already compose the fsc args in `FSharp.NET.Sdk` for normal f#, that's what the `dotnet-compile-fsc` does  
+About building the project using `dotnet build` or `../.../node_modules/.bin/fable`, I don't have a strong preference at the moment. 
 
 ES: About `dotnet build` vs `dotnet fable` is the same for me. 
 ES: You can leave these separated (one does .net compile, the other fable).  
 ES: But using `dotnet build` by default will be the default also for flow.  
 ES: Is easy anyway to try it what work best  
+
+Fable has to read the `.fsproj` again to get the source files and references anyways.  
+
+ES: That's something the sdk can be improve a lot. ref ##Enhancements.2
+
+# Enhancements
+
+## 1 - Auto create `<Reference` from `package.json`
+
+ES: Because you use `package.json`, i can just read that to generate `<Reference`. Import everything by default (minus dev-deps obv)  
+ES: But dunno about transitive deps. I can auto import all inside `node_modules` but need a convention for .dll otherwise i can pick not assemblies.   
+ES: Exclusions can be done with with a prop `<NpmExclude>fable-installed-but-not-used</NpmExclude>`.  
+
+## 2 - Sdk can give you FCS args
+
+ES: I already know inside the target file, all the source/references/defines/etc.  
+ES: I can give you (`fablecompiler`) the fsc compiler args (no need for projectcracker anymore!)
+ES: As a note, i already compose the fsc args in `FSharp.NET.Sdk` for normal f#, that's what the `dotnet-compile-fsc` does  
+
+# Examples
+
+## WIP (ozmo)
+
+ES: Ref `ozmo/ozmo.fsproj`  
+
+**NOTE** require .net core sdk `1.0.0-preview4` not yet released to use `Version` attribute in `PackageReference` (rtw in days anyway)
+
+ES: 1. `dotnet restore`
+ES: 2. `dotnet build`
+
+ES: - the produced `.js` file contains the fcs args now to check what the target file can see  
+ES: - The `<FableReference` create `<Reference Path="node_module/...`  
+ES: - it use `dotnet build` atm (generated js is copied in OutputDir), changing default extension for build artifact  
+
+## A possibile final version (mario)
+
+ES: Ref `mario/mario.fsproj`
+
+ES: i added an example of what i think can be a final version  
+ES: that's going to use next msbuild project enhancement (like remove sdk package, ref https://github.com/Microsoft/msbuild/issues/1392 )  
+ES: All the `fableconfig.json` options can be moved inside the `fsproj` (but fableconfig.json)
