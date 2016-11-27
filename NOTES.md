@@ -32,6 +32,8 @@ ES: `dotnet new -t suave_microservice --lang fsharp`
 
 AGC: This would be nice, I agree it's better to have a consistent experience with other dotnet projects.
 
+ES: yes, also OOTB experience. and `fable init` can just call `dotnet new -t fable` so, you get both.  
+
 > Note users may have different projects in the same repo, but they may want to share the npm dependencies (that's why it's necessary to look for `node_modules` in parent directories too). 
 
 ES: Np about that, search recursively ancestors untils node_modules is found :+1:
@@ -46,6 +48,10 @@ ES: No need for `Fable.targets` and `Import`. It will be auto included from a pa
 ES: That's how extensbility works in sdk (like for f# => `FSharp.NET.Sdk`)
 
 AGC: Would `Fable.Sdk` be the same as `fable-compiler`? If that's the case, does it need to be .NET application or can it be a node app as it's now?
+
+ES: the `Fable.Sdk` package can just contains the `Fable.targets` file. The msbuild integration.  
+ES: Inside `Fable.targets` i can call the existing `fable` in `PATH`. So can be the current nodejs app, like now.  
+ES: Or if `fable-compiler` is a .net app, can be used and downloaded from nuget (like `fsc` compiler now). But can be done later, if at all.  
 
   ```xml
   <PackageReference Include="Fable.Sdk" Version="1.*" />
@@ -64,6 +70,12 @@ ES: I can do `dotnet fable install fable-core fable-powerpack fable-react`
 ES: `dotnet fable` can be your nodejs executable or a normal f# .netcore console app (so xplat by default)  
 
 AGC: How would `dotnet fable` be translated? I mean, where's the executable that would be called?
+
+ES: three options (normal sdk extensibility):  
+ES: 1- In `PATH` exists `dotnet-fable.bat` (or `.sh`, or just `dotnet-fable`). You can add that in node package i think.  
+ES: 2- Inside the msbuild as target with a conventional name like `dotnet fable` => `dotnet msbuild /t:Fable` (i need to check how, is a new feature)  
+ES: 3- A dotnet sdk tool, so a `dotnet-fable.exe` netcoreapp1.0 packaged and referenced as `<DotNetCliToolReference` (like `dotnet-compile-fsc`)  
+ES: All of these can just invoke forward to `../../node_modules/.bin/fable` if is already downloaded by npm. So a wrapper  
 
 This should put the following in the `.fsproj` file:
 
@@ -102,6 +114,9 @@ ES: maybe you can also just move props inside fsproj directly (optional obj, `fa
 
 AGC: That's a possibility but I'd keep `fableconfig.json` for now. I have some concerns about putting Fable compiler arguments in the .fsproj: a) it may become very verbose and not play well in all cases (for example if you include [Rollup options](http://fable.io/blog/Introducing-0-7.html#ES2015-Modules-and-Bundling)), b) intellisense support as we have now in VS Code may be difficult, c) thanks to `command-line-args` npm package, it's easy for me to define a [schema for arguments](https://github.com/fable-compiler/Fable/blob/master/src/fable/Fable.Client.Node/js/fable.js#L11-L34) that produces more or less the same result from the CLI or a json, I'm afraid supporting options in .fsproj may be maintenance burden because I have to edit the Fable.targets file (which still looks very scary to me :wink:) every time an option changes.
 
+ES: the `Fable.target` seems scary because is filled with wip :D . But adding an option require push to nuget a new package version  
+ES: But np, i understand the maintainance etc, dont want to change current working proj  
+
 ## 6. build it!
 
 So now, when building the project, the targets file should get the npm package references, look for the `node_modules` folder (either in the same folder as `.fsproj` or in one of the parent directories) and resolve them as follows 
@@ -111,6 +126,8 @@ ES: For vscode/ides, that's a normal F# project (because include `FSharp.NET.Sdk
 ES: **Question**: The `FABLE_COMPILER` compiler directive is used only for build or also for normal f# (intellisense)?
 
 AGC: Yes. For example now I'm working in a solution that has some common files between the server and the client project. But for now the user can just define the directive in the `.fsproj` (as it's necessary to get IDE support).
+
+ES: Ok, so when is built for fable, is passing `FABLE_COMPILER` always. got it.  
 
   ```xml
   <ItemGroup>
@@ -152,6 +169,8 @@ ES: Exclusions can be done with with a prop `<NpmExclude>fable-installed-but-not
 
 AGC: This is something we can explore, but it may not be necessary in the first version. There can be many dependencies in `package.json` with only half or less than half being Fable-related. In this [example](https://github.com/fable-compiler/fable-react_native-demo/blob/master/package.json) it's easy to see because all Fable packages are prefixed with `fable-` but that may be not the case. Also, as npm installs everything locally you can have a repo like [Fable samples](https://github.com/fable-compiler/Fable/blob/master/samples/package.json) where you install all the common dependencies in the root directory but each project only uses some of them.
 
+ES: Got it. :-1: so
+
 ## 2 - Sdk can give you FCS args
 
 ES: I already know inside the target file, all the source/references/defines/etc.  
@@ -159,6 +178,15 @@ ES: I can give you (`fablecompiler`) the fsc compiler args (no need for projectc
 ES: As a note, i already compose the fsc args in `FSharp.NET.Sdk` for normal f#, that's what the `dotnet-compile-fsc` does  
 
 AGC: This would be really, really interesting :clap: If we're putting Fable options in the `.fsproj` we need a way to distinguish F# compiler and Fable options. If for now we leave Fable options in `fableconfig.json` we just need to pass a first argument to indicate that what follows are F# compiler arguments. The only issue I can think of at the moment is how to read the project options again if the `.fsproj` file is modified in `--watch` mode, but we can ignore that at the moment (if users edit `.fsproj` they just need to restart watch mode).
+
+ES: A good idea anyway is to use response file. That's because compiler argument can become very long.  
+ES: That's a big problem with .netcore because use path from nuget cache, so command line become very very long  
+ES: Windows sucks at that, and there is an hard limit (4k or so) for a single command line arguments (total, not single args)  
+ES: That's why all compilers accept response file (.rsp) who just contains the arguments, splitted in multiple lines  
+ES: so my idea is `fable --fcs-args "path/to/fsc-for-fable.rsp" --other-args` and `path/to/fsc-for-fable.rsp` contains the `FCS` args  
+ES: it's really easy impl, inside `fable` you read the file, and use these for fcs.  
+ES: normal response file (prefix `@` so `@path/to/file.rsp`) are just expanded when parsing the command line, so can contains all args  
+ES: are amazing for dev/tests, because you write rsp, and can rerun `fsc`, and tweaking as needed (or comments too)  
 
 # Examples
 
